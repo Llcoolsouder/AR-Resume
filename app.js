@@ -2,6 +2,8 @@
  * AR.js Sandbox App
  */
 
+import { GraphNode, EadesSpringEmbedderGraphLayout } from './graph-layout.js'
+
 /**
  * Queries back-facing cameras from device
  * @returns Promise containing an array of back-facing, camera, media devices
@@ -58,6 +60,33 @@ function CreateChildTextSphere(parent, position, text) {
   sphere.appendChild(sphereText)
 }
 
+function ParseSkillsData(skills_data) {
+  let skills = new Set()
+  let links = new Set()
+  for (const entry of skills_data) {
+    skills.add(entry.skill)
+    for (const relative of entry.related) {
+      skills.add(relative)
+      links.add({
+        source: entry.skill,
+        target: relative
+      })
+    }
+  }
+
+  let skillNodes = new Map()
+  skills.forEach((skill) => {
+    let newNode = new GraphNode(skill, [])
+    skillNodes.set(skill, newNode)
+  })
+  for (const link of links) {
+    skillNodes.get(link.source).links.push(skillNodes.get(link.target))
+    skillNodes.get(link.target).links.push(skillNodes.get(link.source))
+  }
+
+  return Array.from(skillNodes.values())
+}
+
 function main() {
   GetAvailableCameras()
     .then((availableCameras) => {
@@ -71,23 +100,23 @@ function main() {
         cameraSelect.appendChild(option)
       }
     })
-    .catch((error) => console.log('Unable to generate camera selector options'))
-
-  const skills = ['C++', 'CUDA', 'WhateverThisIs']
-  const marker = document.getElementsByTagName('a-marker')[0]
-  for (let i = 0; i < skills.length; ++i) {
-    const radians = 2 * Math.PI * (i / skills.length)
-    const distanceFromCenter = 0.5
-    CreateChildTextSphere(
-      marker,
-      [
-        Math.cos(radians) * distanceFromCenter,
-        0,
-        Math.sin(radians) * distanceFromCenter
-      ],
-      skills[i]
+    .catch((error) =>
+      console.erro('Unable to generate camera selector options')
     )
-  }
+
+  fetch('skills-data.json')
+    .then((resp) => {
+      return resp.json()
+    })
+    .then(ParseSkillsData)
+    .then((skillNodes) => {
+      new EadesSpringEmbedderGraphLayout(0.5, 0.5, 0.25).Layout(skillNodes)
+      console.log(skillNodes.map((node) => node.position))
+      const marker = document.getElementsByTagName('a-marker')[0]
+      for (const node of skillNodes) {
+        CreateChildTextSphere(marker, node.position, node.data)
+      }
+    })
 }
 
 window.onload = main

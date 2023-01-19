@@ -1,0 +1,125 @@
+[
+    {
+        "skill": "Programming Languages",
+        "related": [
+            "C++",
+            "C",
+            "C#",
+            "F#",
+            "Python",
+            "Javascript",
+            "MATLAB",
+            "Verilog",
+            "Rust",
+            "CUDA"
+        ]
+    },
+    {
+        "skill": "Web Development",
+        "related": [
+            "Frontend",
+            "Backend"
+        ]
+    },
+    {
+        "skill": "Frontend",
+        "related": [
+            "Javascript",
+            "HTML",
+            "CSS",
+            "ReactJS",
+            "Bootstrap"
+        ]
+    },
+    {
+        "skill": "Backend",
+        "related": [
+            "Python",
+            "NGINX",
+            "Docker",
+            "Docker-Compose",
+            "Javascript"
+        ]
+    },
+    {
+        "skill": "Python",
+        "related": [
+            "Flask",
+            "SQLite"
+        ]
+    },
+    {
+        "skill": "Game Development",
+        "related": [
+            "C++",
+            "Unity3D",
+            "VR",
+            "OpenGL"
+        ]
+    },
+    {
+        "skill": "Unity3D",
+        "related": [
+            "C#",
+            "VR"
+        ]
+    },
+    {
+        "skill": "VR",
+        "related": [
+            "Oculus Rift S",
+            "Oculus Go",
+            "HTC Vive",
+            "World-Space GUI"
+        ]
+    },
+    {
+        "skill": "Optimization",
+        "related": [
+            "nvprof",
+            "Nvidia NSight",
+            "Visual Studio Performance Profiler",
+            "CUDA"
+        ]
+    },
+    {
+        "skill": "Electronics",
+        "related": [
+            "Audio Electronics",
+            "Circuit Layout",
+            "KiCAD",
+            "Filtering",
+            "VLSI",
+            "Control Systems",
+            "Embedded Systems",
+            "Digital Circuits"
+        ]
+    },
+    {
+        "skill": "Embedded Systems",
+        "related": [
+            "C",
+            "MSP430",
+            "Serial Communication"
+        ]
+    },
+    {
+        "skill": "Digital Circuits",
+        "related": [
+            "Computer Architecture",
+            "Verilog",
+            "VLSI"
+        ]
+    },
+    {
+        "skill": "GPGPU",
+        "related": [
+            "CUDA",
+            "Triton",
+            "Cutlass",
+            "OpenMP",
+            "OpenGL",
+            "Compute Shaders"
+        ]
+    }
+]
