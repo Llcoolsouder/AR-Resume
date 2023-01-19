@@ -101,7 +101,7 @@ function main() {
       }
     })
     .catch((error) =>
-      console.erro('Unable to generate camera selector options')
+      console.error('Unable to generate camera selector options')
     )
 
   fetch('skills-data.json')
@@ -113,8 +113,25 @@ function main() {
       new EadesSpringEmbedderGraphLayout(0.5, 0.5, 0.25).Layout(skillNodes)
       console.log(skillNodes.map((node) => node.position))
       const marker = document.getElementsByTagName('a-marker')[0]
+      let lines = document.createElement('a-entity')
+      marker.appendChild(lines)
+      let uniqueLinks = new Set()
       for (const node of skillNodes) {
         CreateChildTextSphere(marker, node.position, node.data)
+        for (const link of node.links) {
+          let linkSpec = [node.data, link.data]
+          const linkHasNotBeenDrawn = !(
+            uniqueLinks.has(linkSpec) || uniqueLinks.has(linkSpec.reverse())
+          )
+          if (linkHasNotBeenDrawn) {
+            lines.setAttribute(`line__${uniqueLinks.size}`, {
+              start: node.position.join(' '),
+              end: link.position.join(' '),
+              color: 'black'
+            })
+            uniqueLinks.add(linkSpec)
+          }
+        }
       }
     })
 }

@@ -82,7 +82,7 @@ class SpringEmbedderGraphLayout {
   constructor() {
     this.coolDown = 0.99
     this.errorThreshold = 0.1
-    this.maxIterations = 100
+    this.maxIterations = 150
   }
 
   /**
