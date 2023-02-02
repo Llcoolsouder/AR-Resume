@@ -138,12 +138,12 @@ function main() {
     .then((skillNodes) => {
       new EadesSpringEmbedderGraphLayout(0.25, 0.25, 0.1).Layout(skillNodes)
       console.log(skillNodes.map((node) => node.position))
-      const marker = document.getElementsByTagName('a-marker')[0]
+      const graph = document.getElementById("graph")
       let lines = document.createElement('a-entity')
-      marker.appendChild(lines)
+      graph.appendChild(lines)
       let uniqueLinks = new Set()
       for (const node of skillNodes) {
-        CreateChildTextSphere(marker, node.position, node.size, node.data)
+        CreateChildTextSphere(graph, node.position, node.size, node.data)
         for (const link of node.links) {
           let linkSpec = [node.data, link.data]
           const linkHasNotBeenDrawn = !(
