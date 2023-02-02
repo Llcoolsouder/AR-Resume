@@ -110,7 +110,7 @@ function main() {
     })
     .then(ParseSkillsData)
     .then((skillNodes) => {
-      new EadesSpringEmbedderGraphLayout(0.5, 0.5, 0.25).Layout(skillNodes)
+      new EadesSpringEmbedderGraphLayout(0.25, 0.25, 0.1).Layout(skillNodes)
       console.log(skillNodes.map((node) => node.position))
       const marker = document.getElementsByTagName('a-marker')[0]
       let lines = document.createElement('a-entity')

@@ -7,6 +7,35 @@
 
 export { GraphNode, EadesSpringEmbedderGraphLayout }
 
+/**
+ * Vector functions for convenience
+ */
+let Vector = {
+  Add: function (v, u) {
+    return v.map((value, index) => value + u[index])
+  },
+
+  Subtract: function (v, u) {
+    return v.map((value, index) => value - u[index])
+  },
+
+  Multiply: function (v, u) {
+    return v.map((value, index) => value * u[index])
+  },
+
+  Divide: function (v, u) {
+    return v.map((value, index) => value / u[index])
+  },
+
+  ScalarMultiply: function (v, scalar) {
+    return v.map((value) => value * scalar)
+  },
+
+  ScalarDivide: function (v, scalar) {
+    return v.map((value) => value / scalar)
+  }
+}
+
 class GraphNode {
   /**
    * Creates a GraphNode with data, connected to the nodes specified by
@@ -25,7 +54,7 @@ class GraphNode {
    * @returns Vector pointing from other to this node
    */
   Subtract(other) {
-    return this.position.map((value, index) => value - other.position[index])
+    return Vector.Subtract(this.position, other.position)
   }
 
   /**
@@ -74,7 +103,7 @@ class GraphNode {
    * @param {Number[]} force vector giving direction and magnitude of move
    */
   Move(force) {
-    this.position = this.position.map((value, index) => value + force[index])
+    this.position = Vector.Add(this.position, force)
   }
 }
 
@@ -100,15 +129,15 @@ class SpringEmbedderGraphLayout {
       const forces = nodes.map((node) => {
         const attractiveForce = this.TotalAttractiveForce(node)
         const repulsiveForce = this.TotalRepulsiveForce(node, nodes)
-        console.log(`AttractiveForce:\t${attractiveForce}`)
-        console.log(`RepulsiveForce:\t${repulsiveForce}`)
-        return attractiveForce.map((val, i) => val + repulsiveForce[i])
+        // console.log(`AttractiveForce:\t${attractiveForce}`)
+        // console.log(`RepulsiveForce:\t${repulsiveForce}`)
+        return Vector.Add(attractiveForce, repulsiveForce)
       })
       nodes.forEach((node, index) =>
         node.Move(forces[index].map((val) => val * coolingFactor))
       )
       error = forces
-        .reduce((vecA, vecB) => vecA.map((a, i) => a + vecB[i]))
+        .reduce((vecA, vecB) => Vector.Add(vecA, vecB))
         .reduce((a, b) => a + b)
       console.log(`Error: ${error}`)
       coolingFactor *= this.coolDown
@@ -118,12 +147,12 @@ class SpringEmbedderGraphLayout {
     const minHeight = nodes
       .map((node) => node.position[1])
       .reduce((a, b) => Math.min(a, b), Number.MAX_VALUE)
-    const center2D = nodes
-      .map((node) => [node.position[0], node.position[2]])
-      .reduce((a, b) => {
-        return [a[0] + b[0], a[1] + b[1]]
-      })
-      .map((component) => component / nodes.length)
+    const center2D = R.pipe(
+      R.map((n) => [n.position[0], n.position[2]]),
+      R.reduce(Vector.Add, [0, 0]),
+      R.partialRight(Vector.ScalarDivide, [nodes.length])
+    )(nodes)
+
     nodes.forEach((node) => {
       node.position[0] -= center2D[0]
       node.position[1] -= minHeight
@@ -165,20 +194,27 @@ class EadesSpringEmbedderGraphLayout extends SpringEmbedderGraphLayout {
    * @param {GraphNode} node
    */
   TotalAttractiveForce(node) {
+    const CalculateAttractionMagnitude = (o) => {
+      return (
+        this.attraction *
+        Math.log10(node.DistanceOr(o, this.idealLength) / this.idealLength)
+      )
+    }
+
     let force = [0, 0, 0]
     for (const other of node.links) {
-      const repulsiveForceToIgnore = this.RepulsiveForce(node, other)
-      const magnitude =
-        this.attraction *
-        Math.log10(node.DistanceOr(other, this.idealLength) / this.idealLength)
-      const forceFromOther = node
-        .DirectionToOr(
-          other,
-          [0, 0, 0].map((_) => Math.random())
-        )
-        .map((component) => component * magnitude)
-        .map((component, index) => component - repulsiveForceToIgnore[index])
-      force = force.map((value, index) => value + forceFromOther[index])
+      const forceFromOther = R.pipe(
+        () =>
+          node.DirectionToOr(
+            other,
+            [0, 0, 0].map((_) => Math.random())
+          ),
+        R.partialRight(Vector.ScalarMultiply, [
+          CalculateAttractionMagnitude(other)
+        ]),
+        R.partialRight(Vector.Subtract, [this.RepulsiveForce(node, other)])
+      )()
+      force = Vector.Add(forceFromOther, force)
     }
     return force
   }
@@ -189,13 +225,11 @@ class EadesSpringEmbedderGraphLayout extends SpringEmbedderGraphLayout {
    * @param {GraphNode[]} allNodes List of all other nodes in the graph
    */
   TotalRepulsiveForce(node, allNodes) {
-    let force = [0, 0, 0]
-    for (const other of allNodes) {
-      const magnitude = this.repulsion / Math.pow(node.DistanceOr(other, 1), 2)
-      const forceFromOther = this.RepulsiveForce(node, other)
-      force = force.map((value, index) => value + forceFromOther[index])
-    }
-    return force
+    return R.reduce(
+      Vector.Add,
+      [0, 0, 0],
+      allNodes.map((other) => this.RepulsiveForce(node, other))
+    )
   }
 
   /**
@@ -205,15 +239,13 @@ class EadesSpringEmbedderGraphLayout extends SpringEmbedderGraphLayout {
    */
   RepulsiveForce(nodeA, nodeB) {
     const magnitude = this.repulsion / Math.pow(nodeA.DistanceOr(nodeB, 1), 2)
-    return nodeB
-      .DirectionToOr(
-        nodeA,
-        [0, 0, 0].map((_) => Math.random())
-      )
-      .map((component) => component * magnitude)
+    return R.pipe(
+      () =>
+        nodeB.DirectionToOr(
+          nodeA,
+          [0, 0, 0].map((_) => Math.random())
+        ),
+      R.partialRight(Vector.ScalarMultiply, [magnitude])
+    )()
   }
-}
-
-function Clamp(val, min, max) {
-  return Math.max(min, Math.max(max, val))
 }
