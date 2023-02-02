@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Lonnie Souder AR</title>
-        <meta name="author" content="Lonnie Souder II">
-        <meta name="description" content="My AR Resume">
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-        <link rel="stylesheet" href="style.css">
 
-        <!-- Import AR.js -->
-        <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<head>
+    <title>Lonnie Souder AR</title>
+    <meta name="author" content="Lonnie Souder II">
+    <meta name="description" content="My AR Resume">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="style.css">
 
-        <!-- JS Dependencies -->
-        <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+    <!-- Import AR.js -->
+    <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
-        <!-- My Source -->
-        <script type="module" src="graph-layout.js"></script>
-        <script type="module" src="app.js"></script>
-    </head>
+    <!-- JS Dependencies -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
 
-    <body style="margin : 0px; overflow: hidden;">
-        <!-- AR -->
-        <a-scene embedded arjs vr-mode-ui="enabled: false">
-            <a-entity camera></a-entity>
-            <a-marker type="pattern" preset="custom" url="pattern-desktop_server.patt" size="0.10795" smooth="true">
-                <a-box scale="1 0.1 1" position="0 0.1 0"></a-box>
-                <a-entity id="graph" position="0 0.5 0">
-                    <!-- Generate an object here -->
-                </a-entity>
-            </a-marker>
-        </a-scene>
+    <!-- My Source -->
+    <script type="module" src="graph-layout.js"></script>
+    <script type="module" src="app.js"></script>
+</head>
 
-        <!-- UI -->
-        <div id="lls-ui">
-            <select id="camera-select"></select>
-        </div>
-    </body>
+<body style="margin : 0px; overflow: hidden;">
+    <!-- AR -->
+    <a-scene embedded arjs vr-mode-ui="enabled: false">
+        <a-entity camera></a-entity>
+        <a-marker type="pattern" preset="custom" url="pattern-desktop_server.patt" size="0.10795" smooth="true">
+            <a-box scale="1 0.1 1" position="0 0.1 0"></a-box>
+            <a-entity id="graph" position="0 0.5 0">
+                <!-- Generate an object here -->
+            </a-entity>
+        </a-marker>
+    </a-scene>
+
+    <!-- UI -->
+    <div id="lls-ui">
+        <select id="camera-select"></select>
+    </div>
+</body>
+
 </html>

@@ -138,7 +138,7 @@ function main() {
     .then((skillNodes) => {
       new EadesSpringEmbedderGraphLayout(0.25, 0.25, 0.1).Layout(skillNodes)
       console.log(skillNodes.map((node) => node.position))
-      const graph = document.getElementById("graph")
+      const graph = document.getElementById('graph')
       let lines = document.createElement('a-entity')
       graph.appendChild(lines)
       let uniqueLinks = new Set()
