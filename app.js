@@ -78,10 +78,15 @@ function GetColinearPointOnSurface(from, to) {
   )(from.DirectionTo(to))
 }
 
-function ParseSkillsData(skills_data) {
+/**
+ * Parses a skill data object into a list of GraphNodes
+ * @param {*} skillsData Object containing a list of nodes with a list of related nodes per node.
+ * @returns List of GraphNodes properly populated with data and links to other GraphNodes
+ */
+function ParseSkillsData(skillsData) {
   let skills = new Set()
   let links = new Set()
-  for (const entry of skills_data) {
+  for (const entry of skillsData) {
     skills.add(entry.skill)
     for (const relative of entry.related) {
       skills.add(relative)
@@ -93,10 +98,12 @@ function ParseSkillsData(skills_data) {
   }
 
   let skillNodes = new Map()
-  skills.forEach((skill) => {
-    let newNode = new GraphNode(skill, [])
+  let skillIndex = 0
+  for (const skill of skills) {
+    let newNode = new GraphNode(skill, [], [skillIndex, 0, 0])
     skillNodes.set(skill, newNode)
-  })
+  }
+
   for (const link of links) {
     skillNodes.get(link.source).links.push(skillNodes.get(link.target))
     skillNodes.get(link.target).links.push(skillNodes.get(link.source))
@@ -129,6 +136,7 @@ function main() {
     })
     .then(ParseSkillsData)
     .then((skillNodes) => {
+      console.log(skillNodes.map((node) => node.position))
       new EadesSpringEmbedderGraphLayout(0.25, 0.25, 0.1).Layout(skillNodes)
       console.log(skillNodes.map((node) => node.position))
       const marker = document.getElementsByTagName('a-marker')[0]

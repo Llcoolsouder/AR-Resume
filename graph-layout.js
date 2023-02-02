@@ -43,10 +43,10 @@ class GraphNode {
    * @param {*} data Some data to store in the node
    * @param {GraphNode[]} links References to all nodes to which this node is connected
    */
-  constructor(data, links) {
+  constructor(data, links, position = [0, 0, 0]) {
     this.data = data
     this.links = links
-    this.position = [0, 0, 0]
+    this.position = position
     this.size = 0.25
   }
 
