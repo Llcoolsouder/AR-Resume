@@ -130,13 +130,12 @@ function main() {
       console.error('Unable to generate camera selector options')
     )
 
-  fetch('skills-data.json')
+  fetch('test-skills-data.json')
     .then((resp) => {
       return resp.json()
     })
     .then(ParseSkillsData)
     .then((skillNodes) => {
-      console.log(skillNodes.map((node) => node.position))
       new EadesSpringEmbedderGraphLayout(0.25, 0.25, 0.1).Layout(skillNodes)
       console.log(skillNodes.map((node) => node.position))
       const marker = document.getElementsByTagName('a-marker')[0]
