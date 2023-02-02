@@ -91,6 +91,7 @@ function main() {
   GetAvailableCameras()
     .then((availableCameras) => {
       let cameraSelect = document.getElementById('camera-select')
+      cameraSelect.onchange = HandleCameraSelectOnChange;
       for (let i = 0; i < availableCameras.length; i++) {
         let option = document.createElement('option')
         option.value = availableCameras[i].deviceId
