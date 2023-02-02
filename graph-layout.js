@@ -5,7 +5,7 @@
  * Date:    01/17/2023
  */
 
-export { GraphNode, EadesSpringEmbedderGraphLayout }
+export { GraphNode, EadesSpringEmbedderGraphLayout, Vector }
 
 /**
  * Vector functions for convenience
@@ -47,6 +47,7 @@ class GraphNode {
     this.data = data
     this.links = links
     this.position = [0, 0, 0]
+    this.size = 0.25
   }
 
   /**

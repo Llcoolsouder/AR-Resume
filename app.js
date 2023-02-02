@@ -2,7 +2,11 @@
  * AR.js Sandbox App
  */
 
-import { GraphNode, EadesSpringEmbedderGraphLayout } from './graph-layout.js'
+import {
+  GraphNode,
+  EadesSpringEmbedderGraphLayout,
+  Vector
+} from './graph-layout.js'
 
 /**
  * Queries back-facing cameras from device
@@ -41,14 +45,15 @@ function HandleCameraSelectOnChange() {
  * Creates an AFrame sphere element with label, `text` parented to `parent` at `position`
  * @param {Element} parent Parent of object to be created
  * @param {Number[]} position 3D Euclidean coordinates of the new object
+ * @param {Number} size Size of the sphere in meters
  * @param {string} text Label to display inside the object
  */
-function CreateChildTextSphere(parent, position, text) {
+function CreateChildTextSphere(parent, position, size, text) {
   let sphere = document.createElement('a-entity')
   sphere.setAttribute('geometry', { primitive: 'sphere' })
   sphere.setAttribute('material', { color: '#b3b3cc', opacity: 0.5 })
   sphere.object3D.position.set(...position)
-  sphere.object3D.scale.set(0.25, 0.25, 0.25)
+  sphere.object3D.scale.set(size, size, size)
   parent.appendChild(sphere)
 
   let sphereText = document.createElement('a-entity')
@@ -58,6 +63,19 @@ function CreateChildTextSphere(parent, position, text) {
   })
   sphereText.object3D.scale.set(8, 8, 8)
   sphere.appendChild(sphereText)
+}
+
+/**
+ * @param {GraphNode} from
+ * @param {GraphNode} to
+ * @returns The point on the surface of 'from', nearest to 'to' that is colinear with  vec from->to
+ */
+function GetColinearPointOnSurface(from, to) {
+  return R.pipe(
+    R.partialRight(Vector.ScalarMultiply, [from.size]),
+    R.partial(Vector.Add, [from.position]),
+    (v) => v.join(' ')
+  )(from.DirectionTo(to))
 }
 
 function ParseSkillsData(skills_data) {
@@ -91,7 +109,7 @@ function main() {
   GetAvailableCameras()
     .then((availableCameras) => {
       let cameraSelect = document.getElementById('camera-select')
-      cameraSelect.onchange = HandleCameraSelectOnChange;
+      cameraSelect.onchange = HandleCameraSelectOnChange
       for (let i = 0; i < availableCameras.length; i++) {
         let option = document.createElement('option')
         option.value = availableCameras[i].deviceId
@@ -118,7 +136,7 @@ function main() {
       marker.appendChild(lines)
       let uniqueLinks = new Set()
       for (const node of skillNodes) {
-        CreateChildTextSphere(marker, node.position, node.data)
+        CreateChildTextSphere(marker, node.position, node.size, node.data)
         for (const link of node.links) {
           let linkSpec = [node.data, link.data]
           const linkHasNotBeenDrawn = !(
@@ -126,8 +144,8 @@ function main() {
           )
           if (linkHasNotBeenDrawn) {
             lines.setAttribute(`line__${uniqueLinks.size}`, {
-              start: node.position.join(' '),
-              end: link.position.join(' '),
+              start: GetColinearPointOnSurface(node, link),
+              end: GetColinearPointOnSurface(link, node),
               color: 'black'
             })
             uniqueLinks.add(linkSpec)
