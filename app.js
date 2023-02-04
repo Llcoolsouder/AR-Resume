@@ -54,6 +54,7 @@ function CreateChildTextSphere(parent, position, size, text) {
   sphere.setAttribute('material', { color: '#b3b3cc', opacity: 0.5 })
   sphere.object3D.position.set(...position)
   sphere.object3D.scale.set(size, size, size)
+  sphere.setAttribute('look-at', '[camera]')
   parent.appendChild(sphere)
 
   let sphereText = document.createElement('a-entity')
