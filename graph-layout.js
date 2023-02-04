@@ -47,7 +47,7 @@ class GraphNode {
     this.data = data
     this.links = links
     this.position = position
-    this.size = 0.25
+    this.size = 0.4
   }
 
   /**

@@ -131,7 +131,7 @@ function main() {
       console.error('Unable to generate camera selector options')
     )
 
-  fetch('test-skills-data.json')
+  fetch('skills-data.json')
     .then((resp) => {
       return resp.json()
     })
