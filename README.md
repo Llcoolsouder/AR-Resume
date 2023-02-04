@@ -2,7 +2,9 @@
 
 This repo contains code for my augmented reality resume. The pattern below can be scanned by a mobile phone to open the site where this page is hosted and also serves as the marker for the AR app.
 
-![https://lonniesouderii.dev/AR](https://github.com/Llcoolsouder/AR-Resume/pattern-qr.png?raw=true)
+<p align="center">
+  <img width="75%" src="https://github.com/Llcoolsouder/AR-Resume/blob/main/pattern-qr.png" alt="https://lonniesouderii.dev/AR">
+</p>
 
 ## Components
 
